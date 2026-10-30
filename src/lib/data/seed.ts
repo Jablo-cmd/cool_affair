@@ -50,7 +50,7 @@ export const seedSettings: SiteSettings = {
   soundcloud_url: null,
   youtube_url: null,
   spotify_url: null,
-  bandcamp_url: null,
+  bandcamp_url: "https://coolaffair.bandcamp.com",
   apple_music_url: null,
   facebook_url: null,
   x_url: null,
@@ -90,11 +90,18 @@ const concept = (
   seo_description: null,
 });
 
-// The eight known project identities. Stage "concept": no dates, tracks,
-// audio or artwork are implied.
+// The eight known project identities. Stage "concept" implies no dates,
+// tracks, audio or artwork; Scamto is the one confirmed release.
 export const seedReleases: Release[] = [
   concept("00000000-0000-4000-8000-000000000001", "the-cool-affair-manifesto", "The Cool Affair Manifesto", 1),
-  concept("00000000-0000-4000-8000-000000000002", "scamto-mzansi-argot", "Scamto (Mzansi Argot)", 2),
+  {
+    // Released per the artist's Bandcamp (3 January 2022).
+    ...concept("00000000-0000-4000-8000-000000000002", "scamto-mzansi-argot", "Scamto (Mzansi Argot)", 2),
+    stage: "released",
+    release_date: "2022-01-03",
+    bandcamp_url: "https://coolaffair.bandcamp.com",
+    description: "Vocals: Cool Affair (Sibusiso Ntombela) and Soul Inferno (Itu Neter).",
+  },
   concept("00000000-0000-4000-8000-000000000003", "stone-circles", "Stone Circles", 3),
   concept("00000000-0000-4000-8000-000000000004", "broken-beat-music", "Broken Beat Music", 4),
   concept("00000000-0000-4000-8000-000000000005", "afro-futuristic", "Afro Futuristic", 5),

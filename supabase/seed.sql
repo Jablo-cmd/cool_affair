@@ -1,13 +1,13 @@
 -- Optional starter content for the Cool Affair Universe.
 --
 -- Contains only facts from the artist's brief: name, roles, city, influences
--- and the eight known project identities, all at stage 'concept' with no
--- dates, tracks, audio or artwork. Safe to re-run: existing rows are kept
+-- and the eight known project identities at stage 'concept' (no dates, tracks,
+-- audio or artwork), except Scamto, which is a confirmed 2022 release. Safe to re-run: existing rows are kept
 -- (ON CONFLICT DO NOTHING), so it never overwrites edits made in the Studio.
 
 insert into public.ca_site_settings (
   id, artist_name, legal_name, base_city, roles, influences,
-  hero_statement, intro_statement, alchemy_intro, live_intro, band_concept
+  hero_statement, intro_statement, alchemy_intro, live_intro, band_concept, bandcamp_url
 ) values (
   1,
   'Cool Affair',
@@ -20,7 +20,8 @@ insert into public.ca_site_settings (
   'Cool Affair is the creative identity of Sibusiso Zephania Ntombela: producer, DJ, musician, sound engineer and label owner, working from Johannesburg. It is less a brand than a universe, built from broken beat and nu-jazz, Afrobeat and deep house, ambient space and the city''s underground.',
   'Alchemy is the laboratory: the experiments, research and production notes behind the music. Nothing filed here is a finished release unless it says so.',
   'DJ sets, live electronic performance, collaborations and an expanded Full Band Experience: the sound of Cool Affair, in the room.',
-  'The Full Band Experience is conceived as an expanded format, bringing musicians and electronic production together in one live performance.'
+  'The Full Band Experience is conceived as an expanded format, bringing musicians and electronic production together in one live performance.',
+  'https://coolaffair.bandcamp.com'
 )
 on conflict (id) do nothing;
 
@@ -34,3 +35,11 @@ insert into public.ca_releases (slug, title, kind, stage, status, featured, sort
   ('cool-goes-deep', 'Cool Goes Deep', 'project', 'concept', 'published', false, 7),
   ('full-band-experience', 'Full Band Experience', 'project', 'concept', 'published', false, 8)
 on conflict (slug) do nothing;
+
+-- Scamto (Mzansi Argot) is released, per the artist's Bandcamp listing.
+update public.ca_releases set
+  stage = 'released',
+  release_date = '2022-01-03',
+  bandcamp_url = 'https://coolaffair.bandcamp.com',
+  description = 'Vocals: Cool Affair (Sibusiso Ntombela) and Soul Inferno (Itu Neter).'
+where slug = 'scamto-mzansi-argot' and stage = 'concept';
