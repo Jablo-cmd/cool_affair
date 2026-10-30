@@ -1,0 +1,378 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------------
+   The Cool Affair Universe: design tokens
+   Near-black and graphite grounds, warm bone type, one restrained copper
+   accent. Display: Instrument Serif. Text: Geist. Metadata: Geist Mono.
+   ------------------------------------------------------------------------ */
+
+@theme {
+  --color-ink: #09090a;
+  --color-graphite: #101012;
+  --color-charcoal: #17171a;
+  --color-line: #26262b;
+  --color-smoke: #3b3b41;
+  --color-mist: #8e8b84;
+  --color-silver: #bebcb6;
+  --color-bone: #ece7dd;
+  --color-copper: #c4834f;
+  --color-copper-deep: #8c5a35;
+  --color-signal: #d9534f;
+
+  --font-display: var(--font-instrument), "Iowan Old Style", "Times New Roman", serif;
+  --font-sans: var(--font-geist-sans), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, "SFMono-Regular", monospace;
+
+  --text-mega: clamp(5.25rem, 19vw, 19rem);
+  --text-giant: clamp(3rem, 9vw, 8.5rem);
+  --text-display: clamp(2.5rem, 6vw, 5.25rem);
+
+  --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  html {
+    background: var(--color-ink);
+    color: var(--color-bone);
+    color-scheme: dark;
+    -webkit-text-size-adjust: 100%;
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--color-ink);
+    font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overflow-x: hidden;
+  }
+
+  ::selection {
+    background: var(--color-copper);
+    color: var(--color-ink);
+  }
+
+  :focus-visible {
+    outline: 1px solid var(--color-copper);
+    outline-offset: 3px;
+  }
+
+  input,
+  select,
+  textarea {
+    font: inherit;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+}
+
+/* Film grain over everything: a static SVG noise tile, no JavaScript. */
+.grain::after {
+  content: "";
+  position: fixed;
+  inset: -50%;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.075;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='220' height='220'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1  0 0 0 0 1  0 0 0 0 1  0 0 0 0.9 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  animation: grain 1.2s steps(6) infinite;
+}
+
+@keyframes grain {
+  0% { transform: translate(0, 0); }
+  20% { transform: translate(-3%, 2%); }
+  40% { transform: translate(2%, -3%); }
+  60% { transform: translate(-2%, -1%); }
+  80% { transform: translate(3%, 3%); }
+  100% { transform: translate(0, 0); }
+}
+
+/* Utilities ----------------------------------------------------------------*/
+
+@utility font-display {
+  font-family: var(--font-display);
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+@utility eyebrow {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-mist);
+}
+
+@utility hairline {
+  border-color: var(--color-line);
+}
+
+@utility container-ca {
+  width: 100%;
+  margin-inline: auto;
+  max-width: 96rem;
+  padding-inline: 1rem;
+  @media (width >= 40rem) {
+    padding-inline: 2rem;
+  }
+  @media (width >= 80rem) {
+    padding-inline: 3.5rem;
+  }
+}
+
+@utility text-balance {
+  text-wrap: balance;
+}
+
+@layer components {
+/* Scroll reveal. Pure CSS via scroll-driven animations where supported;
+   elsewhere content is simply visible. */
+@supports (animation-timeline: view()) {
+  @media (prefers-reduced-motion: no-preference) {
+    .reveal {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 0% entry 38%;
+    }
+    .reveal-slow {
+      animation: reveal linear both;
+      animation-timeline: view();
+      animation-range: entry 5% entry 65%;
+    }
+  }
+}
+
+@keyframes reveal {
+  from {
+    opacity: 0;
+    transform: translateY(2.25rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Page entry: a short fade so navigation feels composed, not jumpy. */
+.page-enter {
+  animation: page-enter 0.7s var(--ease-out-expo) both;
+}
+
+@keyframes page-enter {
+  from {
+    opacity: 0;
+    transform: translateY(0.75rem);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Hero letterforms rise in sequence. */
+.rise {
+  animation: rise 1.4s var(--ease-out-expo) both;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(0.35em);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* A playhead sweeps across animated waveforms. Transform-only, so it runs on
+   the compositor instead of re-painting every bar. */
+.wave-sweep {
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 18%;
+  background: linear-gradient(90deg, transparent, color-mix(in oklab, var(--color-copper) 55%, transparent), transparent);
+  mix-blend-mode: screen;
+  animation: sweep 6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+@keyframes sweep {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(560%);
+  }
+}
+
+/* Continuous influence ticker. */
+.marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 48s linear infinite;
+}
+
+.marquee:hover {
+  animation-play-state: paused;
+}
+
+@keyframes marquee {
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+/* Slow rotation for the vinyl / orbit motifs. */
+.orbit {
+  animation: orbit 60s linear infinite;
+}
+
+@keyframes orbit {
+  to {
+    transform: rotate(1turn);
+  }
+}
+
+/* Link underline that draws in. */
+.link-draw {
+  background-image: linear-gradient(currentColor, currentColor);
+  background-size: 0% 1px;
+  background-position: 0 100%;
+  background-repeat: no-repeat;
+  transition: background-size 0.5s var(--ease-out-expo);
+}
+
+.link-draw:hover,
+.link-draw:focus-visible {
+  background-size: 100% 1px;
+}
+
+}
+
+/* Editorial prose (Journal, Alchemy, Story). */
+.prose-ca {
+  font-size: 1.0625rem;
+  line-height: 1.75;
+  color: var(--color-silver);
+}
+
+.prose-ca > * + * {
+  margin-top: 1.4em;
+}
+
+.prose-ca h2,
+.prose-ca h3 {
+  font-family: var(--font-display);
+  color: var(--color-bone);
+  letter-spacing: -0.015em;
+  line-height: 1.1;
+  margin-top: 2.2em;
+}
+
+.prose-ca h2 {
+  font-size: 2.25rem;
+}
+
+.prose-ca h3 {
+  font-size: 1.6rem;
+}
+
+.prose-ca a {
+  color: var(--color-bone);
+  text-decoration: underline;
+  text-decoration-color: var(--color-copper);
+  text-underline-offset: 0.2em;
+}
+
+.prose-ca strong {
+  color: var(--color-bone);
+  font-weight: 600;
+}
+
+.prose-ca blockquote {
+  font-family: var(--font-display);
+  font-size: 1.85rem;
+  line-height: 1.25;
+  color: var(--color-bone);
+  border-left: 1px solid var(--color-copper);
+  padding-left: 1.25rem;
+}
+
+.prose-ca ul,
+.prose-ca ol {
+  padding-left: 1.25rem;
+}
+
+.prose-ca ul {
+  list-style: square;
+}
+
+.prose-ca ol {
+  list-style: decimal;
+}
+
+.prose-ca li::marker {
+  color: var(--color-copper);
+}
+
+.prose-ca code {
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+  background: var(--color-charcoal);
+  padding: 0.1em 0.35em;
+}
+
+.prose-ca hr {
+  border: 0;
+  border-top: 1px solid var(--color-line);
+  margin-block: 2.5em;
+}
+
+/* Native range input for the audio player. */
+.scrubber {
+  appearance: none;
+  background: transparent;
+  height: 1rem;
+  cursor: pointer;
+}
+
+.scrubber::-webkit-slider-runnable-track {
+  height: 1px;
+  background: var(--color-smoke);
+}
+
+.scrubber::-moz-range-track {
+  height: 1px;
+  background: var(--color-smoke);
+}
+
+.scrubber::-webkit-slider-thumb {
+  appearance: none;
+  width: 9px;
+  height: 9px;
+  margin-top: -4px;
+  border-radius: 9999px;
+  background: var(--color-copper);
+}
+
+.scrubber::-moz-range-thumb {
+  width: 9px;
+  height: 9px;
+  border: 0;
+  border-radius: 9999px;
+  background: var(--color-copper);
+}
