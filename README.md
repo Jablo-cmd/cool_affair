@@ -75,7 +75,7 @@ The app never uses the Supabase service-role key.
 
 ## Supabase
 
-The schema, RLS policies and storage bucket are in `supabase/migrations/20261030000000_cool_affair_universe.sql`. **They have not been applied to the production project.** Review the migration and apply it yourself; `docs/SUPABASE.md` has the steps and how to create the first admin.
+The schema, RLS policies and storage bucket are in `supabase/migrations/`. Both migrations are applied to the production project. Next, create the first admin; `docs/SUPABASE.md` has the steps.
 
 ## Documentation
 

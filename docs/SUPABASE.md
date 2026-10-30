@@ -2,7 +2,12 @@
 
 Project ref: `adhppvuwbrnwujziedzj`
 
-> **Nothing has been applied to the production project.** The migration below is prepared and was tested against a local Supabase stack. Review it and apply it yourself when ready.
+> **Status (30 Oct 2026):** both migrations are applied to the production project (`cool_affair_recs`), and the Supabase security advisor reports no issues. The tables are empty: no settings, content or users yet.
+>
+> | Version | Migration |
+> | --- | --- |
+> | `20261030000000` | `cool_affair_universe`: schema, RLS, storage bucket |
+> | `20261030143206` | `harden_ca_functions`: moves the security-definer helpers to the non-exposed `ca_private` schema and pins `search_path` |
 
 ## What the migration creates
 
@@ -36,7 +41,9 @@ It also creates a public-read storage bucket, `ca-media`, which only staff can w
 - **Admins** have editor access plus role management and enquiry deletion.
 - A media asset **cannot be approved** until its permission is `owned`, `licensed` or `permission_granted`. A database constraint enforces this.
 
-## Applying it
+The role helpers (`ca_is_staff`, `ca_is_admin`) and the new-user trigger function live in `ca_private`, which the API does not expose, so they cannot be called through `/rest/v1/rpc`. RLS policies still use them.
+
+## Applying it (new environments)
 
 1. Back up the project: Dashboard → Database → Backups.
 2. Read the migration file.
